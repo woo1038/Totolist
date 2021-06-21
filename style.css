@@ -65,9 +65,11 @@ button {
   opacity: 0.6;
   margin: 0 20px;
   margin-bottom: 3px;
+  transition: .3s;
 }
 .text-items .text-item.active {
   margin: 0;
+  margin-bottom: 3px;
   opacity: 1;
 }
 .text-items .text-item .text-box {
