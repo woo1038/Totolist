@@ -30,6 +30,9 @@ button {
 .color-sky {
   background-color: rgba(135, 207, 235, 0.274);
 }
+.color-yellow {
+  background-color: rgb(221, 193, 32);
+}
 
 
 .title {
@@ -51,9 +54,8 @@ button {
   font-size: 22px;
   margin-right: 5px;
 }
-.add-items .add-btn {}
 
-
+/* ##### List 창 ##### */
 .text-items {
   margin-bottom: 10px;
 }
@@ -72,10 +74,20 @@ button {
   margin-bottom: 3px;
   opacity: 1;
 }
+.text-items .text-item[mode="modify"] {
+  box-shadow: 0 0 2px 2px #ffffff73;
+}
 .text-items .text-item .text-box {
   padding: 5px;
   flex: 1;
 }
+.text-items .text-item .text-modify {
+  flex: 1;
+  padding: 5px;
+  border: none;
+  outline: none;
+}
+
 
 
 .btn-items {
