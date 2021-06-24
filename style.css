@@ -54,6 +54,13 @@ button {
   font-size: 22px;
   margin-right: 5px;
 }
+.add-items .add-text::placeholder {
+  display: inline-block;
+  height: 100%;
+  color:rgb(255, 47, 47);
+  font-size: 16px;
+}
+
 
 /* ##### List 창 ##### */
 .text-items {

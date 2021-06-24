@@ -11,17 +11,35 @@ const remove_all = document.querySelector('.all-remove');
 
 const remove_li = document.getElementsByTagName("li");
 let flag = 0;
-let cnt = 2;
+let cnt = 0;
 
-add_btn.addEventListener('click', addBtn);
+window.onload = function() {
+  cnt = getCookie("count");
+  console.log(cnt);
+}
+
+
+add_btn.addEventListener('click', function() {
+  if(getCookie("count")) {
+    cnt = getCookie("count");
+    cnt++;
+    countCookie("count", cnt);
+  } else {
+    countCookie("count", cnt);
+    cnt = getCookie("count");
+  }
+  addCookie(cnt, "li"+cnt, add_text.value)
+  addBtn();
+});
 remove_all.addEventListener('click', removeAll);
 select_all.addEventListener('click', selectAll);
+
 
 
 /* 요소 생성 */
 function addBtn() {
     if(add_text.value == '') {
-      
+      add_text.placeholder ="한글자 이상 입력해주시길 바랍니다.";
     }else {
       let create_li = document.createElement('li');
       let create_span = document.createElement('span');
@@ -66,11 +84,12 @@ function addBtn() {
       text_items.appendChild(create_li);
       add_text.value = "";
 
-      cnt++;
     }
 };
 
 
+
+/* ################## button event ################## */
 /* 선택 버튼 */
 function select(cnt) {
   let li = document.getElementById('li'+cnt);
@@ -156,3 +175,47 @@ function selectAll() {
 function removeAll() {
   text_items.innerHTML = "";
 };
+
+
+
+
+/* ################## cookie ################## */
+/* Set Cookie Function */
+function setCookie(cookie_name, id, text) {
+  document.cookie = cookie_name + '=' + id + ',' + text;
+}
+
+function countCookie(cookie_name, cnt) {
+  document.cookie = cookie_name + '=' + cnt;
+}
+
+/* Get Cookie Function */
+function getCookie(cookie_name) {
+  var x, y;
+  var val = document.cookie.split(';');
+  
+  for (var i = 0; i < val.length; i++) {
+    x = val[i].substr(0, val[i].indexOf('='));
+    y = val[i].substr(val[i].indexOf('=') + 1);
+    x = x.replace(/^\s+|\s+$/g, ''); // 앞과 뒤의 공백 제거하기
+    if (x == cookie_name) {
+      return unescape(y); // unescape로 디코딩 후 값 리턴
+    }
+  }
+}
+
+/* Add Cookie Function */
+function addCookie(num, id, text) {
+  var items = getCookie('cookie_list_' + num); // 이미 저장된 값을 쿠키에서 가져오기
+  if (items) {
+    var itemArray = items.split(',');
+    // 새로운 값 저장 및 최대 개수 유지하기
+    itemArray.push(id);
+    items = itemArray.join(',');
+    setCookie('cookie_list_' + num, items, text);
+  }
+  else {
+    // 신규 id값 저장하기
+    setCookie('cookie_list_' + num, id, text);
+  }
+}
