@@ -13,22 +13,15 @@ const remove_li = document.getElementsByTagName("li");
 let flag = 0;
 let cnt = 0;
 
+/* 첫화면 실행시 */
 window.onload = function() {
-  cnt = getCookie("count");
-  console.log(cnt);
+  reset_cookie();
 }
 
-
+/* 버튼 이벤트 */
 add_btn.addEventListener('click', function() {
-  if(getCookie("count")) {
-    cnt = getCookie("count");
-    cnt++;
-    countCookie("count", cnt);
-  } else {
-    countCookie("count", cnt);
-    cnt = getCookie("count");
-  }
-  addCookie(cnt, "li"+cnt, add_text.value)
+  rise_cookie();
+  add_cookie(cnt, "li"+cnt, add_text.value);
   addBtn();
 });
 remove_all.addEventListener('click', removeAll);
@@ -86,6 +79,52 @@ function addBtn() {
 
     }
 };
+
+/* 저장된 값으로 블록 만들기 */
+function block_list(id, num, text) {
+      let create_li = document.createElement('li');
+      let create_span = document.createElement('span');
+      let create_input = document.createElement('input');
+      let create_add = document.createElement('button');
+      let create_modify = document.createElement('button');
+      let create_remove = document.createElement('button');
+
+
+      create_li.className = "text-item"
+      create_li.setAttribute('id', id);
+      create_li.setAttribute('mode', 'completed');
+      
+      let span_text = document.createTextNode(text);
+      create_span.className = "text-box";
+      create_span.appendChild(span_text);
+      create_li.appendChild(create_span);
+
+      create_input.className = "text-modify";
+      create_input.setAttribute('type', 'text');
+      create_input.style.display = "none";
+      create_li.appendChild(create_input);
+
+      let button_add = document.createTextNode("선택");
+      create_add.className = "select-btn color-green";
+      create_add.setAttribute('onclick', 'select('+num +")");
+      create_add.appendChild(button_add);
+      create_li.appendChild(create_add);
+
+      let button_modify = document.createTextNode("수정");
+      create_modify.className = "modify-btn color-yellow";
+      create_modify.setAttribute('onclick', 'modify('+num +")");
+      create_modify.appendChild(button_modify);
+      create_li.appendChild(create_modify);
+
+      let button_remove = document.createTextNode("삭제");
+      create_remove.className = "remove-btn color-red";
+      create_remove.setAttribute('onclick', 'remove('+num +")");
+      create_remove.appendChild(button_remove);
+      create_li.appendChild(create_remove);
+
+      text_items.appendChild(create_li);
+      add_text.value = "";
+}
 
 
 
@@ -152,6 +191,8 @@ function remove(cnt) {
   let li = document.getElementById('li'+cnt);
 
   li.remove();
+  delete_cookie(cnt);
+
 }
 
 
@@ -180,17 +221,50 @@ function removeAll() {
 
 
 /* ################## cookie ################## */
+/* cookie 설정 */
+function reset_cookie() {
+  if(isNaN(get_cookie("count"))) {
+    count_cookie("count", cnt);
+  } else {
+    cnt = get_cookie("count");
+  }
+
+
+  for(let i=1; i<=cnt; i++) {
+    let cookie_arr = get_cookie('cookie_list_' + i); // 이미 저장된 값을 쿠키에서 가져오기
+    console.log(cookie_arr);
+    let cookie_items = cookie_arr.split(',');
+    let items_id = cookie_items[0];
+    let items_num = items_id.substr(2, items_id.length);
+    let items_text = cookie_items[1];
+
+    block_list(items_id, items_num, items_text);
+  }
+}
+
+function rise_cookie() {
+  if(get_cookie("count")) {
+    cnt = get_cookie("count");
+    cnt++;
+    count_cookie("count", cnt);
+  } else {   
+    count_cookie("count", cnt);
+    cnt = get_cookie("count");
+  }
+}
+
+
 /* Set Cookie Function */
-function setCookie(cookie_name, id, text) {
+function set_cookie(cookie_name, id, text) {
   document.cookie = cookie_name + '=' + id + ',' + text;
 }
 
-function countCookie(cookie_name, cnt) {
+function count_cookie(cookie_name, cnt) {
   document.cookie = cookie_name + '=' + cnt;
 }
 
 /* Get Cookie Function */
-function getCookie(cookie_name) {
+function get_cookie(cookie_name) {
   var x, y;
   var val = document.cookie.split(';');
   
@@ -205,17 +279,21 @@ function getCookie(cookie_name) {
 }
 
 /* Add Cookie Function */
-function addCookie(num, id, text) {
-  var items = getCookie('cookie_list_' + num); // 이미 저장된 값을 쿠키에서 가져오기
+function add_cookie(num, id, text) {
+  var items = get_cookie('cookie_list_' + num); // 이미 저장된 값을 쿠키에서 가져오기
   if (items) {
     var itemArray = items.split(',');
     // 새로운 값 저장 및 최대 개수 유지하기
     itemArray.push(id);
     items = itemArray.join(',');
-    setCookie('cookie_list_' + num, items, text);
+    set_cookie('cookie_list_' + num, items, text);
   }
   else {
     // 신규 id값 저장하기
-    setCookie('cookie_list_' + num, id, text);
+    set_cookie('cookie_list_' + num, id, text);
   }
+}
+
+function delete_cookie(name) {
+  document.cookie = "cookie_list_" + name +'=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
 }
