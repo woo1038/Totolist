@@ -19,3 +19,9 @@
 1. chrome 종료 후 재 입력시 count 값 NaN 오류 수정 완료
 2. 새로 고침 후에도 cookie 데이터로 list UI 남아있도록 수정 완료
 3. 삭제 시 cookie 데이터도 함께 삭제 기능 추가
+
+================= 2021. 06. 26  =================
+1. reset_cookie 함수 사용 도중 count 개수로 하여금 for문을 통해 cookie 값을 불러오는 과정에서 오류 발생으로 인해 cookie 이름들을 담는 새로운 cookie_list 작성을 통해 count 개수가 아닌 cookie_list 이름을 통한 for문으로 변경 완료
+2. remove 삭제 기능 추가
+3. 삭제 클릭시 cookie에도 반영
+4. 삭제 후 새로 추가시 split 함수 오류 수정 완료
