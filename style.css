@@ -76,7 +76,7 @@ button {
   margin-bottom: 3px;
   transition: .3s;
 }
-.text-items .text-item.active {
+.text-items .text-item[select="check"] {
   margin: 0;
   margin-bottom: 3px;
   opacity: 1;
