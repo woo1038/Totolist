@@ -10,8 +10,7 @@ const select_all = document.querySelector('.all-select');
 const remove_all = document.querySelector('.all-remove');
 
 const remove_li = document.getElementsByTagName("li");
-let flag = 0;
-let cnt = 0;
+let cnt = 1;
 
 /* 첫화면 실행시 */
 window.onload = function() {
@@ -217,16 +216,37 @@ function remove(cnt) {
 
 /* 모두 선택 */
 function selectAll() {
-  if(flag == 0) {
-    for(let i=1; i<text_items.childNodes.length; i++) {
-      text_items.childNodes[i].className = "text-item active";
+  let array = [];
+  for(let i=1; i<=text_items.childElementCount; i++) {
+    array[i] = text_items.childNodes[i];
+  }
+
+  let filtered = array.some(check_select);
+  if(filtered) {
+    for(let i=1; i<=text_items.childElementCount; i++) {
+      cookie_items(i, "check");
+
+      text_items.childNodes[i].setAttribute("select", "check");
     }
-    flag = 1;
-  } else if (flag == 1) {
-    for(let i=1; i<text_items.childNodes.length; i++) {
-      text_items.childNodes[i].className = "text-item";
+  } else {
+    for(let i=1; i<=text_items.childElementCount; i++) {
+      cookie_items(i, "unchecked");
+      text_items.childNodes[i].setAttribute("select", "unchecked");
     }
-    flag = 0;
+  }
+
+  // 배열 check 확인 함수
+  function check_select(check) {
+    return check.getAttribute("select") == "unchecked";
+  }
+
+  // cookie 값 변경 함수
+  function cookie_items(i, check) {
+    let id = text_items.childNodes[i].getAttribute("id");
+    let num = id.substr(2, id.length);
+    let text = get_cookie("cookie_list_"+num).split(',')[1];
+    
+    set_cookie("cookie_list_"+num, id, text, check);
   }
 };
 
@@ -234,6 +254,14 @@ function selectAll() {
 /* 모두 삭제 */
 function removeAll() {
   text_items.innerHTML = "";
+
+  if(get_cookie("count") > 0) {
+    let list_arr = get_cookie("cookie_list").split(',');
+    
+    for(arr in list_arr) {
+      delete_list_cookie(list_arr[arr]);
+    }
+  }
 };
 
 
@@ -319,6 +347,12 @@ function plus_cookie(id, value) {
 
 function delete_cookie(name) {
   document.cookie = "cookie_list_" + name +'=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+}
+
+function delete_list_cookie(name) {
+  document.cookie = name +'=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+  document.cookie = "cookie_list" +'=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+  document.cookie = "count" +'=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
 }
 
 function remove_cookie(id, value) {
