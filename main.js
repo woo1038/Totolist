@@ -50,8 +50,10 @@ function addBtn() {
 
   create_li.className = "text-item"
   create_li.setAttribute('id', "li"+cnt);
+  create_li.setAttribute('draggable', 'true');
   create_li.setAttribute('mode', 'completed');
   create_li.setAttribute('select', 'unchecked');
+  create_li.setAttribute('onclick', 'order('+cnt +")");
   
   let span_text = document.createTextNode(add_text.value);
   create_span.className = "text-box";
@@ -81,6 +83,7 @@ function addBtn() {
   create_remove.appendChild(button_remove);
   create_li.appendChild(create_remove);
 
+
   text_items.appendChild(create_li);
   add_text.value = "";
 };
@@ -99,6 +102,7 @@ function block_list(id, num, text, check) {
   create_li.setAttribute('id', id);
   create_li.setAttribute('mode', 'completed');
   create_li.setAttribute('select', check);
+  create_li.setAttribute('onclick', 'order('+num +")");
   
   let span_text = document.createTextNode(text);
   create_span.className = "text-box";
@@ -146,7 +150,6 @@ function select(cnt) {
   }
 
   /* 선택 시 cookie 수정 */
-  console.log();
   let items = get_cookie("cookie_list_"+cnt).split(',');
   let id = items[0];
   let text = items[1];
@@ -363,4 +366,84 @@ function remove_cookie(id, value) {
   value_cookie(id, filtered);
 
   document.cookie = "cookie_list_" + value +'=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+}
+
+
+/* 순서 변경 이벤트 */
+var dragSrcEl = null;
+
+function handleDragStart(e) {
+  // Target (this) element is the source node.
+  dragSrcEl = this;
+
+  e.dataTransfer.effectAllowed = 'move';
+  e.dataTransfer.setData('text/html', this.outerHTML);
+
+  this.classList.add('dragElem');
+}
+function handleDragOver(e) {
+  if (e.preventDefault) {
+    e.preventDefault(); // Necessary. Allows us to drop.
+  }
+  this.classList.add('over');
+
+  e.dataTransfer.dropEffect = 'move';  // See the section on the DataTransfer object.
+
+  return false;
+}
+
+function handleDragEnter(e) {
+  // this / e.target is the current hover target.
+}
+
+function handleDragLeave(e) {
+  this.classList.remove('over');  // this / e.target is previous target element.
+}
+
+function handleDrop(e) {
+  // this/e.target is current target element.
+
+  if (e.stopPropagation) {
+    e.stopPropagation(); // Stops some browsers from redirecting.
+  }
+
+  // Don't do anything if dropping the same column we're dragging.
+  if (dragSrcEl != this) {
+    // Set the source column's HTML to the HTML of the column we dropped on.
+    //alert(this.outerHTML);
+    //dragSrcEl.innerHTML = this.innerHTML;
+    //this.innerHTML = e.dataTransfer.getData('text/html');
+    this.parentNode.removeChild(dragSrcEl);
+    console.log(this);
+    var dropHTML = e.dataTransfer.getData('text/html');
+    this.insertAdjacentHTML('beforebegin',dropHTML);
+    var dropElem = this.previousSibling;
+    addDnDHandlers(dropElem);
+    
+  }
+  this.classList.remove('over');
+  return false;
+}
+
+function handleDragEnd(e) {
+  // this/e.target is the source node.
+  this.classList.remove('over');
+
+  /*[].forEach.call(cols, function (col) {
+    col.classList.remove('over');
+  });*/
+}
+
+function addDnDHandlers(elem) {
+  elem.addEventListener('dragstart', handleDragStart, false);
+  elem.addEventListener('dragenter', handleDragEnter, false)
+  elem.addEventListener('dragover', handleDragOver, false);
+  elem.addEventListener('dragleave', handleDragLeave, false);
+  elem.addEventListener('drop', handleDrop, false);
+  elem.addEventListener('dragend', handleDragEnd, false);
+}
+
+function order(cnt) {
+  let li = document.getElementById('li'+cnt);
+  addDnDHandlers(li);
 }
